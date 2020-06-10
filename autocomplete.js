@@ -121,7 +121,11 @@ class RestrictedAutocomplete {
         return this._lastResultLongitude;
     }
 
-
+    /**
+     * Get place basic details (cheaper) of given place id and set class last result properties.
+     * At the end it will call the callback function passed on constructor
+     * @param {string} placeId Google place id.
+     */
     addrSelected(placeId) {
         var request = {
             placeId: placeId,
