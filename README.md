@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/index.html" alt="Coverage lines">
+    <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/" alt="Coverage lines">
         <img src="./coverage/badge-lines.svg" /></a>
     <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/index.html" alt="Coverage functions">
         <img src="./coverage/badge-branches.svg" /></a>
