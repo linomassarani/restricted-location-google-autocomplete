@@ -119,7 +119,6 @@ class RestrictedAutocomplete {
         this.placesService.getDetails(request, (place, status) => {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
                 this._lastResultBusca = place.name;
-                console.log(this.lastResultBusca);
                 this._lastResultEnderecoCompleto = place.formatted_address;
                 this._lastResultId = place.place_id;
                 this._lastResultLatitude = place.geometry.location.lat();
@@ -133,6 +132,7 @@ class RestrictedAutocomplete {
                         case "route":
                             this._lastResultLogradouro = item.long_name;
                             this._lastResultLogradouroA = item.short_name;
+			    this.textField.value = item.long_name;
                             break;
                         case "sublocality_level_1":
                             this._lastResultBairro = item.long_name;
@@ -217,7 +217,6 @@ class RestrictedAutocomplete {
                     b.innerHTML += "<input type='hidden' value='" + item.place_id + "'>";
 
                     b.addEventListener("click", (e) => {
-                        this.textField.value = this.dropDownPredictionList.getElementsByTagName("input")[0].value;
                         var placeId = this.dropDownPredictionList.getElementsByTagName("input")[1].value;
                         this.closeAllLists();
                         this.addrSelected(placeId);
