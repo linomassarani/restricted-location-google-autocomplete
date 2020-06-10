@@ -12,6 +12,8 @@ Requires both "Maps JavaScript API" and "Places API" properly activated on your 
 
 The initial project was based on https://www.w3schools.com/howto/howto_js_autocomplete.asp
 
+If you have doubts about the billing of the related requests see this explanation https://stackoverflow.com/a/53655495/4324194
+
 # How it looks like
 
 ![](usage-example.gif)
