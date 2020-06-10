@@ -1,13 +1,19 @@
 class RestrictedAutocomplete {
 
+    /**
+     * Contructor
+     * @param {object} textField A document textfield to show autocomplete predictions.
+     * @param {function} callback Callback function that is called after user select a prediction.
+     * @return {RestrictedAutocomplete} Instantiated object.
+     */
     constructor(textField, callback) {
         this.service;
         this.placesService;
         this.timer;
-        this.numero;
-        this.bairro;
-        this.cidade;
-        this.estado;
+        this.numero;//road number
+        this.bairro;//neighborhood
+        this.cidade;//city
+        this.estado;//state
         this.isQueryRunning;
         this.placesSessionToken;
         this.dropDownPredictionList;
@@ -15,21 +21,21 @@ class RestrictedAutocomplete {
         this.currentFocus;
         this.callBack = callback;
 
-        this._lastResultBusca;
-        this._lastResultEnderecoCompleto;
-        this._lastResultNumero;
-        this._lastResultNumeroA;
-        this._lastResultLogradouro;
+        this._lastResultBusca;//search typed by user
+        this._lastResultEnderecoCompleto;//complete address
+        this._lastResultNumero;//number
+        this._lastResultNumeroA;//number (a)breviated
+        this._lastResultLogradouro;//road
         this._lastResultLogradouroA;
-        this._lastResultBairro;
+        this._lastResultBairro;//neighborhood
         this._lastResultBairroA;
-        this._lastResultCidade;
+        this._lastResultCidade;//city
         this._lastResultCidadeA;
-        this._lastResultEstado;
+        this._lastResultEstado;//state
         this._lastResultEstadoA;
-        this._lastResultPais;
+        this._lastResultPais;//country
         this._lastResultPaisA;
-        this._lastResultCEP;
+        this._lastResultCEP;//postal code
         this._lastResultCEPA;
         this._lastResultId;
         this._lastResultLatitude;
@@ -43,6 +49,13 @@ class RestrictedAutocomplete {
 
     }
 
+    /**
+     * Set text fields that will be used to restrict the user autocomplete input predictions.
+     * @param {object} textField A document textfield to restrict state.
+     * @param {object} textField A document textfield to restrict city.
+     * @param {object} textField A document textfield to restrict neighborhood.
+     * @param {object} textField A document textfield to restrict number.
+     */
     setRestrictions(estado, cidade, bairro, numero) {
         this.estado = estado;
         this.cidade = cidade;
@@ -178,14 +191,13 @@ class RestrictedAutocomplete {
 
 
         var val = this.textField.value;
-        /*close any already open lists of autocompleted values*/
         this.closeAllLists();
         this.currentFocus = -1;
-        /*create a DIV element that will contain the items (values):*/
+
         this.dropDownPredictionList = document.createElement("DIV");
         this.dropDownPredictionList.setAttribute("id", this.id + "autocomplete-list");
         this.dropDownPredictionList.setAttribute("class", "autocomplete-items");
-        /*append the DIV element as a child of the autocomplete container:*/
+
         this.textField.parentNode.appendChild(this.dropDownPredictionList);
         var addrQuery = "";
         if (this.estado && this.estado != "") addrQuery += this.estado.value + " ";
