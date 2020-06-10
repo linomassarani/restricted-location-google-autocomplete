@@ -4,7 +4,7 @@
     <img src="https://img.shields.io/npm/l/make-coverage-badge.svg">
 </p>
 
-> Building
+> Tests
 <p align="left">
     <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/" alt="Coverage lines">
         <img src="./coverage/badge-lines.svg" /></a>
