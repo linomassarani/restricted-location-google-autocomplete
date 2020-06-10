@@ -16,6 +16,8 @@ If you have doubts about the billing of the related requests see this explanatio
 
 See also my answer here https://stackoverflow.com/a/62294304/4324194
 
+Ou aqui em português https://pt.stackoverflow.com/a/456651/193152
+
 # What it looks like
 
 ![](usage-example.gif)
