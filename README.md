@@ -14,6 +14,8 @@ The initial project was based on https://www.w3schools.com/howto/howto_js_autoco
 
 If you have doubts about the billing of the related requests see this explanation https://stackoverflow.com/a/53655495/4324194
 
+See also my answer here https://stackoverflow.com/a/62294304/4324194
+
 # What it looks like
 
 ![](usage-example.gif)
