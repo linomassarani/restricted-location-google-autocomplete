@@ -32,6 +32,8 @@ Another advantage of using a custom autocomplete, instead the google default wid
 
 It's not 100% that it wont return undesirable results, but it will save a lot off users typing efforts.
 
+It's required that Places API and Maps JavaScript API is activated on your console.cloud.google.com.
+
 # What it looks like
 
 ![](usage-example.gif)
