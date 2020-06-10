@@ -1,0 +1,3 @@
+{"total": {"lines":{"total":170,"covered":36,"skipped":0,"pct":21.18},"statements":{"total":185,"covered":36,"skipped":0,"pct":19.46},"functions":{"total":35,"covered":1,"skipped":0,"pct":2.86},"branches":{"total":68,"covered":0,"skipped":0,"pct":0}}
+,"/home/massarani/workspace/working/restricted-location-google-autocomplete/src/autocomplete.js": {"lines":{"total":170,"covered":36,"skipped":0,"pct":21.18},"functions":{"total":35,"covered":1,"skipped":0,"pct":2.86},"statements":{"total":185,"covered":36,"skipped":0,"pct":19.46},"branches":{"total":68,"covered":0,"skipped":0,"pct":0}}
+}

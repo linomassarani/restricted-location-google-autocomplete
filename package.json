@@ -1,0 +1,47 @@
+{
+  "name": "restricted-location-google-autocomplete",
+  "version": "1.0.0",
+  "description": "Javascript autocomplete textfield using Google Places API being capable to restrict for whatever you want",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest",
+    "test:coverage": "npm test -- --coverage",
+    "test:badges": "npm run test:coverage  && jest-coverage-badges"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linomassarani/restricted-location-google-autocomplete.git"
+  },
+  "keywords": [
+    "google",
+    "places",
+    "autocomplete"
+  ],
+  "author": "cbmsc",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/linomassarani/restricted-location-google-autocomplete/issues"
+  },
+  "homepage": "https://github.com/linomassarani/restricted-location-google-autocomplete#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "jest": "^26.0.1"
+  },
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "jest-coverage-badges": "^1.1.2"
+  },
+  "jest": {
+  "coverageReporters": [
+    "json-summary", 
+    "text",
+    "lcov"
+  ]
+}
+}
+

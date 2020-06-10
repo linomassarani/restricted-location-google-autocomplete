@@ -1,4 +1,6 @@
-class RestrictedAutocomplete {
+"use strict";
+
+export class RestrictedAutocomplete {
 
     /**
      * Contructor
