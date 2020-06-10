@@ -1,10 +1,11 @@
-<p align="center"><b> Restricted Location Google Autocomplete </b></p>
-
-<p align="center">
+# Restricted Location Google Autocomplete
+> License
+<p align="left">
     <img src="https://img.shields.io/npm/l/make-coverage-badge.svg">
 </p>
 
-<p align="center">
+> Building
+<p align="left">
     <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/" alt="Coverage lines">
         <img src="./coverage/badge-lines.svg" /></a>
     <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/index.html" alt="Coverage functions">
