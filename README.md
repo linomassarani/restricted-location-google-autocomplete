@@ -3,13 +3,13 @@
 </p>
 
 <p align="center">
-    <a href="./coverage/lcov-report/" alt="Coverage lines">
+    <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/index.html" alt="Coverage lines">
         <img src="./coverage/badge-lines.svg" /></a>
-    <a href="./coverage/lcov-report/" alt="Coverage functions">
+    <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/index.html" alt="Coverage functions">
         <img src="./coverage/badge-branches.svg" /></a>
-    <a href="./coverage/lcov-report/" alt="Coverage branches">
+    <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/index.html" alt="Coverage branches">
         <img src="./coverage/badge-branches.svg" /></a>
-    <a href="./coverage/lcov-report/" alt="Coverage statements">
+    <a href="https://raw.githubusercontent.com/linomassarani/restricted-location-google-autocomplete/master/coverage/lcov-report/index.html" alt="Coverage statements">
         <img src="./coverage/badge-statements.svg" /></a>
 </p>
 
