@@ -1,0 +1,313 @@
+class RestrictedAutocomplete {
+
+    constructor(textField, callback) {
+        this.service;
+        this.placesService;
+        this.timer;
+        this.numero;
+        this.bairro;
+        this.cidade;
+        this.estado;
+        this.isQueryRunning;
+        this.placesSessionToken;
+        this.dropDownPredictionList;
+        this.textField = textField;
+        this.currentFocus;
+        this.callBack = callback;
+
+        this._lastResultBusca;
+        this._lastResultEnderecoCompleto;
+        this._lastResultNumero;
+        this._lastResultNumeroA;
+        this._lastResultLogradouro;
+        this._lastResultLogradouroA;
+        this._lastResultBairro;
+        this._lastResultBairroA;
+        this._lastResultCidade;
+        this._lastResultCidadeA;
+        this._lastResultEstado;
+        this._lastResultEstadoA;
+        this._lastResultPais;
+        this._lastResultPaisA;
+        this._lastResultCEP;
+        this._lastResultCEPA;
+        this._lastResultId;
+        this._lastResultLatitude;
+        this._lastResultLongitude;
+
+        this.onTextChange = this.onTextChange.bind(this);
+
+        this.textField.addEventListener("input", this.onTextChange, false);
+        this.textField.addEventListener("keydown", this.onKeyDown, false);
+        document.addEventListener("click", this.closeAllLists, false);
+
+    }
+
+    setRestrictions(estado, cidade, bairro, numero) {
+        this.estado = estado;
+        this.cidade = cidade;
+        this.bairro = bairro;
+        this.numero = numero;
+    }
+
+    get lastResultBusca() {
+        return this._lastResultBusca;
+    }
+    get lastResultEnderecoCompleto() {
+        return this._lastResultEnderecoCompleto;
+    }
+    get lastResultNumero() {
+        return this._lastResultNumero;
+    }
+    get lastResultNumeroA() {
+        return this._lastResultNumeroA;
+    }
+    get lastResultLogradouro() {
+        return this._lastResultLogradouro;
+    }
+    get lastResultLogradouroA() {
+        return this._lastResultLogradouroA;
+    }
+    get lastResultBairro() {
+        return this._lastResultBairro;
+    }
+    get lastResultBairroA() {
+        return this._lastResultBairroA;
+    }
+    get lastResultCidade() {
+        return this._lastResultCidade;
+    }
+    get lastResultCidadeA() {
+        return this._lastResultCidadeA;
+    }
+    get lastResultEstado() {
+        return this._lastResultEstado;
+    }
+    get lastResultEstadoA() {
+        return this._lastResultEstadoA;
+    }
+    get lastResultPais() {
+        return this._lastResultPais;
+    }
+    get lastResultPaisA() {
+        return this._lastResultPaisA;
+    }
+    get lastResultCEP() {
+        return this._lastResultCEP;
+    }
+    get lastResultCEPA() {
+        return this._lastResultCEPA;
+    }
+    get lastResultId() {
+        return this._lastResultId;
+    }
+    get lastResultLatitude() {
+        return this._lastResultLatitude;
+    }
+    get lastResultLongitude() {
+        return this._lastResultLongitude;
+    }
+
+
+    addrSelected(placeId) {
+        var request = {
+            placeId: placeId,
+            sessionToken: this.placesSessionToken,
+            fields: ['place_id', 'name', 'formatted_address', 'geometry', 'address_components'],
+        }
+
+        this.placesService.getDetails(request, (place, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                this._lastResultBusca = place.name;
+                console.log(this.lastResultBusca);
+                this._lastResultEnderecoCompleto = place.formatted_address;
+                this._lastResultId = place.place_id;
+                this._lastResultLatitude = place.geometry.location.lat();
+                this._lastResultLongitude = place.geometry.location.lng();
+                place.address_components.forEach((item) => {
+                    switch (item.types[0]) {
+                        case "street_number":
+                            this._lastResultNumero = item.long_name;
+                            this._lastResultNumeroA = item.short_name;
+                            break;
+                        case "route":
+                            this._lastResultLogradouro = item.long_name;
+                            this._lastResultLogradouroA = item.short_name;
+                            break;
+                        case "sublocality_level_1":
+                            this._lastResultBairro = item.long_name;
+                            this._lastResultBairroA = item.short_name;
+                            break;
+                        case "administrative_area_level_2":
+                            this._lastResultCidade = item.long_name;
+                            this._lastResultCidadeA = item.short_name;
+                            break;
+                        case "administrative_area_level_1":
+                            this._lastResultEstado = item.long_name;
+                            this._lastResultEstadoA = item.short_name;
+                            break;
+                        case "country":
+                            this._lastResultPais = item.long_name;
+                            this._lastResultPaisA = item.short_name;
+                            break;
+                        case "postal_code":
+                            this._lastResultCEP = item.long_name;
+                            this._lastResultCEPA = item.short_name;
+                            break;
+                    }
+                });
+                this.callBack();
+            }
+        });
+        this.placesSessionToken = null;
+
+    }
+
+    queryGooglePlacesAndShowResults() {
+        if (this.isQueryRunning) return;
+        this.isQueryRunning = true;
+        if (this.placesSessionToken == null) this.placesSessionToken = new google.maps.places.AutocompleteSessionToken();
+        if (this.service == null) this.service = new google.maps.places.AutocompleteService();
+
+        if (this.placesService == null) {
+            this.serviceHelper = document.createElement("DIV");
+            this.serviceHelper.setAttribute("id", "service-helper");
+            this.textField.parentNode.appendChild(this.serviceHelper);
+            this.placesService = new google.maps.places.PlacesService($('#service-helper').get(0));
+        }
+
+
+        var val = this.textField.value;
+        /*close any already open lists of autocompleted values*/
+        this.closeAllLists();
+        this.currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        this.dropDownPredictionList = document.createElement("DIV");
+        this.dropDownPredictionList.setAttribute("id", this.id + "autocomplete-list");
+        this.dropDownPredictionList.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.textField.parentNode.appendChild(this.dropDownPredictionList);
+        var addrQuery = "";
+        if (this.estado && this.estado != "") addrQuery += this.estado.value + " ";
+        if (this.cidade && this.cidade != "") addrQuery += this.cidade.value + " ";
+        if (this.bairro && this.bairro != "") addrQuery += this.bairro.value + " ";
+        if (this.numero.value && this.numero.value != 0 && this.numero.value != "") addrQuery += "NUMERO " + this.numero.value + " ";
+        if (val) addrQuery += val;
+
+        var request = {
+            input: addrQuery,
+            sessionToken: this.placesSessionToken,
+            componentRestrictions: {
+                country: 'br'
+            },
+            types: ['address'],
+        }
+
+        //getPlacePredictions() to retrieve matching places
+        //getQueryPredictions: retrieve matching places plus suggested search terms.
+        this.service.getPlacePredictions(request, (place, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+                place.forEach((item) => {
+                    var addr = item.description;
+                    var b = document.createElement("DIV");
+                    b.innerHTML = "<strong>" + addr.substr(0, val.length) + "</strong>";
+                    b.innerHTML += addr.substr(val.length);
+
+                    b.innerHTML += "<input type='hidden' value='" + addr + "'>";
+                    b.innerHTML += "<input type='hidden' value='" + item.place_id + "'>";
+
+                    b.addEventListener("click", (e) => {
+                        this.textField.value = this.dropDownPredictionList.getElementsByTagName("input")[0].value;
+                        var placeId = this.dropDownPredictionList.getElementsByTagName("input")[1].value;
+                        this.closeAllLists();
+                        this.addrSelected(placeId);
+                    });
+                    this.dropDownPredictionList.appendChild(b);
+                });
+            } else if (val && val != "") {
+                var b = document.createElement("DIV");
+                b.innerHTML = "<strong>" + "Nao corresponde a nenhum endereco" + "</strong>";
+                b.addEventListener("click", function(e) {
+                    this.textField.value = "";
+                    this.closeAllLists();
+                });
+                this.dropDownPredictionList.appendChild(b);
+            }
+            this.isQueryRunning = false;
+            if (val && val != "") {
+                var b = document.createElement("DIV");
+                b.setAttribute("class", "poweredByGoogle");
+                b.innerHTML = '<p class="poweredByGoogle">powered by ' +
+                    '<a style=color:#4285f4>G</a>' +
+                    '<a style=color:#ea4335>o</a>' +
+                    '<a style=color:#fbbc05>o</a>' +
+                    '<a style=color:#4285f4>g</a>' +
+                    '<a style=color:#34a853>l</a>' +
+                    '<a style=color:#ea4335>e<a/></p>';
+                this.dropDownPredictionList.appendChild(b);
+            }
+        });
+    }
+
+    onTextChange(e) {
+        clearTimeout(this.timer);
+        var root = this;
+        this.timer = setTimeout(() => {
+            this.queryGooglePlacesAndShowResults();
+        }, 300);
+    }
+
+    removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+            x[i].classList.remove("autocomplete-active");
+        }
+    }
+
+    addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (this.currentFocus >= x.length) this.currentFocus = 0;
+        if (this.currentFocus < 0) this.currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[this.currentFocus].classList.add("autocomplete-active");
+    }
+
+    onKeyDown(e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            this.currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            this.currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (this.currentFocus > -1) {
+                /*and simulate a click on the "active" item:*/
+                if (x) x[this.currentFocus].click();
+            }
+        }
+    }
+
+    closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+        except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+            if (elmnt != x[i] && elmnt != this.textField) {
+                x[i].parentNode.removeChild(x[i]);
+            }
+        }
+    }
+}
