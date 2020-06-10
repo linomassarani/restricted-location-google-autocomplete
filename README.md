@@ -18,7 +18,7 @@
 
 
 
-Google API autocompletes methods don't give us a complete restrict address options, only for desired country and for bounds (if you have the coordinates). Soo this solution, in javascript, is capable to restrict an address for whatever you want.
+Google API autocompletes methods don't give us a complete restrict address options, only a few, for exemple, country, bounds (if you have the coordinates) and so on. Soo this solution, in javascript, is capable to restrict an address for whatever you want.
 
 Is little tricky for users type all the complete address (neighborhood, city, state, etc.) every time he needs to get a correct address, at least in my case of use (firefighters emergency calls attendance).
 
