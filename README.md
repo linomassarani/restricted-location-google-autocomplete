@@ -1,3 +1,18 @@
+<p align="center">
+    <img src="https://img.shields.io/npm/l/make-coverage-badge.svg">
+</p>
+
+<p align="center">
+    <a href="./coverage/lcov-report/" alt="Coverage lines">
+        <img src="./coverage/badge-lines.svg" /></a>
+    <a href="./coverage/lcov-report/" alt="Coverage functions">
+        <img src="./coverage/badge-branches.svg" /></a>
+    <a href="./coverage/lcov-report/" alt="Coverage branches">
+        <img src="./coverage/badge-branches.svg" /></a>
+    <a href="./coverage/lcov-report/" alt="Coverage statements">
+        <img src="./coverage/badge-statements.svg" /></a>
+</p>
+
 # Restricted Location Google Autocomplete
 
 Javascript autocomplete textfield using Google Places API being capable to restrict for whatever you want.
