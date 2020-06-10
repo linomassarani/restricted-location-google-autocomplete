@@ -1,3 +1,5 @@
+<p align="center"><b> Restricted Location Google Autocomplete </b></p>
+
 <p align="center">
     <img src="https://img.shields.io/npm/l/make-coverage-badge.svg">
 </p>
@@ -13,7 +15,7 @@
         <img src="./coverage/badge-statements.svg" /></a>
 </p>
 
-# Restricted Location Google Autocomplete
+
 
 Javascript autocomplete textfield using Google Places API being capable to restrict for whatever you want.
 
