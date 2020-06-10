@@ -1,5 +1,8 @@
-# restricted-location-google-autocomplete
+# Restricted Location Google Autocomplete
+
 Javascript autocomplete textfield using Google Places API being capable to restrict for whatever you want.
+
+Basically this script tricks google apis and users by adding behind the scenes the necessary restricntions within the request, before it goes to google servers.
 
 This example uses service.getPlacePredictions and google.maps.places.AutocompleteService what means that the billing stands for "Autocomplete without Places Details - Per Session", that means you'll be billed only once since when user start typing, till he clicks on an address prediction.
 
