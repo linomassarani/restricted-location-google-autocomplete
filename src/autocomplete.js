@@ -48,7 +48,6 @@ export class RestrictedAutocomplete {
         this.textField.addEventListener("input", this.onTextChange, false);
         this.textField.addEventListener("keydown", this.onKeyDown, false);
         document.addEventListener("click", this.closeAllLists, false);
-
     }
 
     /**

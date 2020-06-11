@@ -7,6 +7,7 @@
       <meta content="utf-8" http-equiv="encoding">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" type="text/css" href="style.css">
+      <link rel="stylesheet" type="text/css" href="../src/autocomplete.css">
    </head>
    <body>
       <p>This example uses service.getPlacePredictions and google.maps.places.AutocompleteService what means that the billing stands for "Autocomplete without Places Details - Per Session"</p>
@@ -22,9 +23,9 @@
          <input type="submit">
       </form>
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-      <script async defer src="https://maps.googleapis.com/maps/api/js?key=???????????????????????????&libraries=places" type="text/javascript"></script>
+      <script async defer src="https://maps.googleapis.com/maps/api/js?key=???????????????????&libraries=places" type="text/javascript"></script>
       <script type="module">
-	 import {RestrictedAutocomplete} from './autocomplete.js';
+	 import {RestrictedAutocomplete} from '../src/autocomplete.js';
          let autocomplete = new RestrictedAutocomplete(document.getElementById("logradouro"), function () {
          	console.log(this.lastResultBusca);
          	console.log(this.lastResultEnderecoCompleto);
