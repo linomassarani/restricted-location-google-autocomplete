@@ -45,9 +45,16 @@ export class RestrictedAutocomplete {
 
         this.onTextChange = this.onTextChange.bind(this);
 
-        this.textField.addEventListener("input", this.onTextChange, false);
-        this.textField.addEventListener("keydown", this.onKeyDown, false);
-        document.addEventListener("click", this.closeAllLists, false);
+	try {
+		if(!this.textField) throw ReferenceError("autocomplete textField is null");
+		if(this.textField.type != "text") throw TypeError("autocomplete textField is not text");
+
+		this.textField.addEventListener("input", this.onTextChange, false);
+	        this.textField.addEventListener("keydown", this.onKeyDown, false);
+        	document.addEventListener("click", this.closeAllLists, false);
+	} catch (err) {
+		console.error(err);
+	}
     }
 
     /**
@@ -174,7 +181,7 @@ export class RestrictedAutocomplete {
                             break;
                     }
                 });
-                this.callBack();
+                if(this.callBack instanceof Function) this.callBack();
             }
         });
         this.placesSessionToken = null;
