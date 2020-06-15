@@ -46,3 +46,18 @@
      background-color: #fff;
 }
 
+ p.googleConErr {
+     padding: 0;
+     font-size: 12px;
+     margin: 0;
+     color: #757575;
+}
+ div.googleConErr {
+     padding-right: 5px;
+     pointer-events:none;
+}
+ div.googleConErr:hover {
+     background-color: #fff;
+}
+
+
