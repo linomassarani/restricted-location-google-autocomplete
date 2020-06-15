@@ -49,8 +49,6 @@ export class RestrictedAutocomplete {
 
 		this.onTextChange = this.onTextChange.bind(this);
 
-
-
 		try {
 			if (!this.textField) throw ReferenceError("autocomplete textField is null");
 			if (this.textField.type != "text") throw TypeError("autocomplete textField is not text");
