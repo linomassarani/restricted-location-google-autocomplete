@@ -42,6 +42,7 @@ export class RestrictedAutocomplete {
 
 			this.textField.addEventListener("input", this.onTextChange, false);
 			this.textField.addEventListener("keydown", this.onKeyDown, false);
+		    
 			document.addEventListener("click", this.closeAllLists, false);
 		} catch (err) {
 			console.error(err);
@@ -328,6 +329,9 @@ export class RestrictedAutocomplete {
 				/*and simulate a click on the "active" item:*/
 				if (x) x[this.currentFocus].click();
 			}
+		} else if (e.keyCode == 9) {
+		    //tab
+		    this.closeAllLists(e);
 		}
 	}
 
