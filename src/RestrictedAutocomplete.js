@@ -24,6 +24,7 @@ export class RestrictedAutocomplete {
 		this.textField = textField;
 		this.currentFocus;
 		this.callBack = callback;
+		this.queryType = ['address'];
 
 		this.lastResult;
 
@@ -45,6 +46,14 @@ export class RestrictedAutocomplete {
 		} catch (err) {
 			console.error(err);
 		}
+	}
+	
+	/**
+	 * When called, following google predictions will be over 
+	 * establishments instead of addresses
+	 */
+	setEstablishmentOnly() {
+	    this.queryType = ['establishment'];
 	}
 
 	/**
@@ -164,19 +173,23 @@ export class RestrictedAutocomplete {
 
 		this.textField.parentNode.appendChild(this.dropDownPredictionList);
 		var addrQuery = "";
-		if (this.estado.value 
+		if (this.estado
+		    && this.estado.value 
 		    && this.estado.value != "" 
 		    && this.estado.value != 0 
 		    && this.estado.value != "0") addrQuery += this.estado.value + " ";
-		if (this.cidade.value 
+		if (this.cidade
+		    && this.cidade.value 
 		    && this.cidade.value != ""
 		    && this.cidade.value != 0 
 		    && this.cidade.value != "0") addrQuery += this.cidade.value + " ";
-		if (this.bairro.value 
+		if (this.bairro
+		    && this.bairro.value 
 		    && this.bairro.value != ""
 		    && this.bairro.value != 0 
 		    && this.bairro.value != "0") addrQuery += this.bairro.value + " ";
-		if (this.numero.value 
+		if (this.numero
+		    && this.numero.value 
 		    && this.numero.value != 0 
 		    && this.numero.value != ""
 		    && this.numero.value != "0") addrQuery += "NUMERO " + this.numero.value + " ";
@@ -188,7 +201,7 @@ export class RestrictedAutocomplete {
 			componentRestrictions: {
 				country: 'br'
 			},
-			types: ['address'],
+			types: this.queryType,
 		}
 
 		try {
