@@ -195,28 +195,20 @@ export class RestrictedAutocomplete {
 		this.dropDownPredictionList.setAttribute("class", "autocomplete-items");
 
 		this.textField.parentNode.appendChild(this.dropDownPredictionList);
+		
+		let invalidValuesArray = [null, "", 0, "0"];
+		
 		let addrQuery = "";
-		if (this.estado
-		    && this.estado.value 
-		    && this.estado.value != "" 
-		    && this.estado.value != 0 
-		    && this.estado.value != "0") addrQuery += this.estado.value + " ";
-		if (this.cidade
-		    && this.cidade.value 
-		    && this.cidade.value != ""
-		    && this.cidade.value != 0 
-		    && this.cidade.value != "0") addrQuery += this.cidade.value + " ";
-		if (this.bairro
-		    && this.bairro.value 
-		    && this.bairro.value != ""
-		    && this.bairro.value != 0 
-		    && this.bairro.value != "0") addrQuery += this.bairro.value + " ";
-		if (this.numero
-		    && this.numero.value 
-		    && this.numero.value != 0 
-		    && this.numero.value != ""
-		    && this.numero.value != "0") addrQuery += "NUMERO " + this.numero.value + " ";
-		if (this.textField.value) addrQuery += this.textField.value;
+		if (this.estado && !(this.estado.value in invalidValuesArray))
+	        addrQuery += this.estado.value + " ";
+		if (this.cidade && !(this.cidade.value in invalidValuesArray))
+            addrQuery += this.cidade.value + " ";
+		if (this.bairro && !(this.bairro.value in invalidValuesArray))
+		    addrQuery += this.bairro.value + " ";
+		if (this.numero && !(this.numero.value in invalidValuesArray))
+		    addrQuery += "NUMERO " + this.numero.value + " ";
+		if (this.textField.value) 
+		    addrQuery += this.textField.value;
         
 		let request = {
 			input: addrQuery,
