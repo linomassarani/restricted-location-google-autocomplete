@@ -2,6 +2,11 @@
 
 import {RestrictedPlace} from '../src/RestrictedPlace.js';
 
+/**
+ * For informations about this class access
+ * 
+ * https://github.com/linomassarani/restricted-location-google-autocomplete
+ */
 export class RestrictedAutocomplete {
 
 	/**
@@ -368,5 +373,3 @@ export class RestrictedAutocomplete {
 		}
 	}
 }
-
-
