@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 import {RestrictedPlace} from '../src/RestrictedPlace.js';
 
@@ -32,18 +32,15 @@ export class RestrictedAutocomplete {
 		this.serviceHelper.setAttribute("id", "service-helper");
 		this.textField.parentNode.appendChild(this.serviceHelper);
 
-		this.onTextChange = this.onTextChange.bind(this);
-		this.onKeyDown = this.onKeyDown.bind(this);
-
 		try {
 			if (!this.textField) throw ReferenceError("autocomplete textField is null");
 			if (this.textField.type != "text") throw TypeError("autocomplete textField is not text");
 			this.textField.setAttribute("autocomplete","off");
 
-			this.textField.addEventListener("input", this.onTextChange, false);
-			this.textField.addEventListener("keydown", this.onKeyDown, false);
+			this.textField.addEventListener("input", e => this.onTextChange(e), false);
+			this.textField.addEventListener("keydown", e => this.onKeyDown(e), false);
 		    
-			document.addEventListener("click", this.closeAllLists, false);
+			document.addEventListener("click", e => this.closeAllLists(e), false);
 		} catch (err) {
 			console.error(err);
 		}
@@ -87,72 +84,78 @@ export class RestrictedAutocomplete {
 	 * @param {string} placeId Google place id.
 	 */
 	addrSelected(placeId) {
-	    this.lastResult = new RestrictedPlace();
-		
-		var request = {
+		let request = {
 			placeId: placeId,
 			sessionToken: this.placesSessionToken,
-			fields: ['place_id', 'name', 'formatted_address', 'geometry', 'address_components'],
+			fields: ['place_id', 'name', 'formatted_address', 'geometry', 
+			    'address_components'],
 		}
-		try {
-			this.placesService.getDetails(request, (place, status) => {
-				try {
-					if (status === google.maps.places.PlacesServiceStatus.OK) {
-						this.lastResult.busca = place.name;
-						this.lastResult.enderecoCompleto = place.formatted_address;
-						this.lastResult.googleId = place.place_id;
-						this.lastResult.latitude = place.geometry.location.lat();
-						this.lastResult.longitude = place.geometry.location.lng();
-						place.address_components.forEach((item) => {
-							switch (item.types[0]) {
-								case "street_number":
-									this.lastResult.numero = item.long_name;
-									this.lastResult.numeroAbreviado = item.short_name;
-									break;
-								case "route":
-									this.lastResult.logradouro = item.long_name;
-									this.lastResult.logradouroAbreviado = item.short_name;
-									this.textField.value = item.long_name;
-									break;
-								case "sublocality_level_1":
-									this.lastResult.bairro = item.long_name;
-									this.lastResult.bairroAbreviado = item.short_name;
-									break;
-								case "administrative_area_level_2":
-									this.lastResult.cidade = item.long_name;
-									this.lastResult.cidadeAbreviado = item.short_name;
-									break;
-								case "administrative_area_level_1":
-									this.lastResult.estado = item.long_name;
-									this.lastResult.estadoAbreviado = item.short_name;
-									break;
-								case "country":
-									this.lastResult.pais = item.long_name;
-									this.lastResult.paisAbreviado = item.short_name;
-									break;
-								case "postal_code":
-									this.lastResult.cEP = item.long_name;
-									this.lastResult.cEPAbreviado = item.short_name;
-									break;
-							}
-						});
-                        try {
-                          if (this.callBack instanceof Function) this.callBack();
-                        } catch (err) {
-                            console.error('A função passada como parâmetro ao autocomplete ' +
-                                'para ser executada após selecionado o endereço ' +
-        		                'apresentou um erro');
-                        }
-					} else throw "erro ao buscar detalhes do lugar selecionado";
-				} catch (err) {
-					this.handleGoogleConetionError(err);
-				}
-			});
-		} catch (err) {
-			this.handleGoogleConetionError(err);
-		}
+		
+		let placeDetailsError = "erro ao buscar detalhes do lugar selecionado: ";
+		let callBackError = 'A função passada como parâmetro ao autocomplete ' +
+                        'para ser executada após selecionado o endereço ' +
+                        'apresentou um erro: ';
+		
+		let placeDetails = 
+		    request => new Promise(
+		        resolve => this.placesService.getDetails(request, resolve));
+		    
+		placeDetails(request)
+	        .then(place => this.setLastResult(place))
+	        .then(lastResult => this.callBack(lastResult), (e) => {
+	            this.handleGoogleConetionError(placeDetailsError + e.message);
+	        })
+	        .catch(e => {
+	            console.error(callBackError + e.message);
+	        });
+	            
 		this.placesSessionToken = null;
 	}
+	
+	setLastResult(place) {
+	    this.lastResult = new RestrictedPlace();
+
+    	this.lastResult.busca = place.name;
+		this.lastResult.enderecoCompleto = place.formatted_address;
+		this.lastResult.googleId = place.place_id;
+		this.lastResult.latitude = place.geometry.location.lat();
+		this.lastResult.longitude = place.geometry.location.lng();
+		place.address_components.forEach((item) => {
+			switch (item.types[0]) {
+				case "street_number":
+					this.lastResult.numero = item.long_name;
+					this.lastResult.numeroAbreviado = item.short_name;
+					break;
+				case "route":
+					this.lastResult.logradouro = item.long_name;
+					this.lastResult.logradouroAbreviado = item.short_name;
+					this.textField.value = item.long_name;
+					break;
+				case "sublocality_level_1":
+					this.lastResult.bairro = item.long_name;
+					this.lastResult.bairroAbreviado = item.short_name;
+					break;
+				case "administrative_area_level_2":
+					this.lastResult.cidade = item.long_name;
+					this.lastResult.cidadeAbreviado = item.short_name;
+					break;
+				case "administrative_area_level_1":
+					this.lastResult.estado = item.long_name;
+					this.lastResult.estadoAbreviado = item.short_name;
+					break;
+				case "country":
+					this.lastResult.pais = item.long_name;
+					this.lastResult.paisAbreviado = item.short_name;
+					break;
+				case "postal_code":
+					this.lastResult.cEP = item.long_name;
+					this.lastResult.cEPAbreviado = item.short_name;
+					break;
+	        }
+	    });
+	    
+	    return this.lastResult;
+    }
 
 	queryGooglePlacesAndShowResults() {
 		if (this.isQueryRunning) return;
@@ -164,7 +167,7 @@ export class RestrictedAutocomplete {
 			this.handleGoogleConetionError(err);
 		}
 
-		var val = this.textField.value;
+		let val = this.textField.value;
 		this.closeAllLists();
 		this.currentFocus = -1;
 
@@ -173,7 +176,7 @@ export class RestrictedAutocomplete {
 		this.dropDownPredictionList.setAttribute("class", "autocomplete-items");
 
 		this.textField.parentNode.appendChild(this.dropDownPredictionList);
-		var addrQuery = "";
+		let addrQuery = "";
 		if (this.estado
 		    && this.estado.value 
 		    && this.estado.value != "" 
@@ -196,7 +199,7 @@ export class RestrictedAutocomplete {
 		    && this.numero.value != "0") addrQuery += "NUMERO " + this.numero.value + " ";
 		if (val) addrQuery += val;
         
-		var request = {
+		let request = {
 			input: addrQuery,
 			sessionToken: this.placesSessionToken,
 			componentRestrictions: {
@@ -212,8 +215,8 @@ export class RestrictedAutocomplete {
 				try {
 					if (status === google.maps.places.PlacesServiceStatus.OK) {
 						place.forEach((item) => {
-							var addr = item.description;
-							var b = document.createElement("DIV");
+							let addr = item.description;
+							let b = document.createElement("DIV");
 							b.innerHTML = "<strong>" + addr.substr(0, val.length) + "</strong>";
 							b.innerHTML += addr.substr(val.length);
 
@@ -221,7 +224,7 @@ export class RestrictedAutocomplete {
 							b.innerHTML += "<input type='hidden' value='" + item.place_id + "'>";
 
 							b.addEventListener("click", (e) => {
-								var placeId = this.dropDownPredictionList.getElementsByTagName("input")[1].value;
+								let placeId = this.dropDownPredictionList.getElementsByTagName("input")[1].value;
 								this.closeAllLists();
 								this.addrSelected(placeId);
 							});
@@ -230,7 +233,7 @@ export class RestrictedAutocomplete {
 					} else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS &&
 						val && val != "") {
 
-						var b = document.createElement("DIV");
+						let b = document.createElement("DIV");
     					b.innerHTML = "<strong>" + "Não corresponde a nenhum endereço" + "</strong>";
 						b.addEventListener("click", function (e) {
 							this.textField.value = "";
@@ -240,7 +243,7 @@ export class RestrictedAutocomplete {
 					} else if (val && val != "") throw "erro ao buscar predição no google";
 
 					if (val && val != "") {
-						var b = document.createElement("DIV");
+						let b = document.createElement("DIV");
 						b.setAttribute("class", "poweredByGoogle");
 						b.innerHTML = '<p class="poweredByGoogle">powered by ' +
 							'<a style=color:#4285f4>G</a>' +
@@ -271,7 +274,7 @@ export class RestrictedAutocomplete {
 		this.dropDownPredictionList.setAttribute("class", "autocomplete-items");
 		this.textField.parentNode.appendChild(this.dropDownPredictionList);
 
-		var b = document.createElement("DIV");
+		let b = document.createElement("DIV");
 		b.setAttribute("class", "googleConErr");
 		b.innerHTML = '<p class="googleConErr">' +
 			'O Google não está respondendo verifique sua conexão com a internet. ' +
@@ -283,15 +286,20 @@ export class RestrictedAutocomplete {
 
 	onTextChange(e) {
 		clearTimeout(this.timer);
-		var root = this;
-		this.timer = setTimeout(() => {
-			this.queryGooglePlacesAndShowResults();
-		}, 300);
+		let root = this;
+		
+		const wait = 
+		    ms => new Promise(resolve => setTimeout(resolve, ms));
+		    
+		wait(300)
+		    .then(() => this.queryGooglePlacesAndShowResults())
+		    .catch(e => console.error("Ocorreu um problema ao fazer " +
+		         "busca no Google: " + e.message));
 	}
 
 	removeActive(x) {
 		/*a function to remove the "active" class from all autocomplete items:*/
-		for (var i = 0; i < x.length; i++) {
+		for (let i = 0; i < x.length; i++) {
 			x[i].classList.remove("autocomplete-active");
 		}
 	}
@@ -308,7 +316,7 @@ export class RestrictedAutocomplete {
 	}
 
 	onKeyDown(e) {
-		var x = document.getElementById(this.id + "autocomplete-list");
+		let x = document.getElementById(this.id + "autocomplete-list");
 		if (x) x = x.getElementsByTagName("div");
 		if (e.keyCode == 40) {
 			/*If the arrow DOWN key is pressed,
@@ -338,8 +346,8 @@ export class RestrictedAutocomplete {
 	closeAllLists(elmnt) {
 		/*close all autocomplete lists in the document,
 		except the one passed as an argument:*/
-		var x = document.getElementsByClassName("autocomplete-items");
-		for (var i = 0; i < x.length; i++) {
+		let x = document.getElementsByClassName("autocomplete-items");
+		for (let i = 0; i < x.length; i++) {
 			if (elmnt != x[i] && elmnt != this.textField) {
 				x[i].parentNode.removeChild(x[i]);
 			}
