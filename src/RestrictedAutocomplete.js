@@ -96,21 +96,40 @@ export class RestrictedAutocomplete {
                         'para ser executada após selecionado o endereço ' +
                         'apresentou um erro: ';
 		
-		let placeDetails = 
-		    request => new Promise(
-		        resolve => this.placesService.getDetails(request, resolve));
-		    
-		placeDetails(request)
-	        .then(place => this.setLastResult(place))
-	        .then(lastResult => this.callBack(lastResult), (e) => {
-	            this.handleGoogleConetionError(placeDetailsError + e.message);
+		this.getPlaceDetail(request)
+	        .then(place => this.setLastResult(place), (status) => {
+	            this.handleGoogleConetionError(placeDetailsError + status);
+	            throw -999;
 	        })
+	        .then(lastResult => this.callBack(lastResult))
 	        .catch(e => {
-	            console.error(callBackError + e.message);
+	            if(e != -999) console.error(this.callBackError + e.message);
 	        });
 	            
 		this.placesSessionToken = null;
 	}
+	
+    getPlaceDetail(request) {
+        return new Promise((resolve, reject) => {
+            this.placesService.getDetails(request, function(place, status) {
+                if (status == google.maps.places.PlacesServiceStatus.OK) 
+                    resolve(place);
+                else reject(status);
+            });
+        });
+    }
+    
+    getPlacePredictions(request) {
+        //getPlacePredictions() to retrieve matching places
+        //getQueryPredictions: retrieve matching places plus suggested search terms.
+        return new Promise((resolve, reject) => {
+            this.service.getPlacePredictions(request, function(place, status) {
+                if (status == google.maps.places.PlacesServiceStatus.OK) 
+                    resolve(place);
+                else reject(status);
+            });
+        });
+    }
 	
 	setLastResult(place) {
 	    this.lastResult = new RestrictedPlace();
@@ -197,7 +216,7 @@ export class RestrictedAutocomplete {
 		    && this.numero.value != 0 
 		    && this.numero.value != ""
 		    && this.numero.value != "0") addrQuery += "NUMERO " + this.numero.value + " ";
-		if (val) addrQuery += val;
+		if (this.textField.value) addrQuery += this.textField.value;
         
 		let request = {
 			input: addrQuery,
@@ -208,61 +227,64 @@ export class RestrictedAutocomplete {
 			types: this.queryType,
 		}
 
-		try {
-			//getPlacePredictions() to retrieve matching places
-			//getQueryPredictions: retrieve matching places plus suggested search terms.
-			this.service.getPlacePredictions(request, (place, status) => {
-				try {
-					if (status === google.maps.places.PlacesServiceStatus.OK) {
-						place.forEach((item) => {
-							let addr = item.description;
-							let b = document.createElement("DIV");
-							b.innerHTML = "<strong>" + addr.substr(0, val.length) + "</strong>";
-							b.innerHTML += addr.substr(val.length);
+        this.getPlacePredictions(request)
+            .then(places => this.showPredictions(places))
+			.catch((status) => {
+			    if(this.textField.value && this.textField.value != "") {
+			        if (status ==
+			            google.maps.places.PlacesServiceStatus.ZERO_RESULTS) 
+                        this.showNoResutlsMsg();
+					 else 
+					    this.handleGoogleConetionError("erro ao buscar " + 
+					        "predição no google");
+			    }})
+            .finally(() => {
+                this.isQueryRunning = false;
+            });
+	}
+	
+	showPredictions(places) {
+	    places.forEach((item) => {
+		    let addr = item.description;
+		    let b = document.createElement("DIV");
+		    b.innerHTML = "<strong>" + addr.substr(0, this.textField.value.length) + "</strong>";
+		    b.innerHTML += addr.substr(this.textField.value.length);
 
-							b.innerHTML += "<input type='hidden' value='" + addr + "'>";
-							b.innerHTML += "<input type='hidden' value='" + item.place_id + "'>";
+		    b.innerHTML += "<input type='hidden' value='" + addr + "'>";
+		    b.innerHTML += "<input type='hidden' value='" + item.place_id + "'>";
 
-							b.addEventListener("click", (e) => {
-								let placeId = this.dropDownPredictionList.getElementsByTagName("input")[1].value;
-								this.closeAllLists();
-								this.addrSelected(placeId);
-							});
-							this.dropDownPredictionList.appendChild(b);
-						});
-					} else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS &&
-						val && val != "") {
-
-						let b = document.createElement("DIV");
-    					b.innerHTML = "<strong>" + "Não corresponde a nenhum endereço" + "</strong>";
-						b.addEventListener("click", function (e) {
-							this.textField.value = "";
-							this.closeAllLists();
-						});
-						this.dropDownPredictionList.appendChild(b);
-					} else if (val && val != "") throw "erro ao buscar predição no google";
-
-					if (val && val != "") {
-						let b = document.createElement("DIV");
-						b.setAttribute("class", "poweredByGoogle");
-						b.innerHTML = '<p class="poweredByGoogle">powered by ' +
-							'<a style=color:#4285f4>G</a>' +
-							'<a style=color:#ea4335>o</a>' +
-							'<a style=color:#fbbc05>o</a>' +
-							'<a style=color:#4285f4>g</a>' +
-							'<a style=color:#34a853>l</a>' +
-							'<a style=color:#ea4335>e<a/></p>';
-						this.dropDownPredictionList.appendChild(b);
-					}
-
-					this.isQueryRunning = false;
-				} catch (err) {
-					this.handleGoogleConetionError(err);
-				}
-			});
-		} catch (err) {
-			this.handleGoogleConetionError(err);
-		}
+		    b.addEventListener("click", (e) => {
+			    let placeId = this.dropDownPredictionList.getElementsByTagName("input")[1].value;
+			    this.closeAllLists();
+			    this.addrSelected(placeId);
+		    });
+		    this.dropDownPredictionList.appendChild(b);
+        });
+        this.showGoogleCredits();
+	}
+	
+	showNoResutlsMsg() {
+		let b = document.createElement("DIV");
+		b.innerHTML = "<strong>" + "Não corresponde a nenhum endereço" + "</strong>";
+		b.addEventListener("click", function (e) {
+			this.textField.value = "";
+			this.closeAllLists();
+		});
+		this.dropDownPredictionList.appendChild(b);
+		this.showGoogleCredits();
+	}
+	
+	showGoogleCredits() {
+		let b = document.createElement("DIV");
+		b.setAttribute("class", "poweredByGoogle");
+		b.innerHTML = '<p class="poweredByGoogle">powered by ' +
+			'<a style=color:#4285f4>G</a>' +
+			'<a style=color:#ea4335>o</a>' +
+			'<a style=color:#fbbc05>o</a>' +
+			'<a style=color:#4285f4>g</a>' +
+			'<a style=color:#34a853>l</a>' +
+			'<a style=color:#ea4335>e<a/></p>';
+		this.dropDownPredictionList.appendChild(b);
 	}
 
 	handleGoogleConetionError(err) {
