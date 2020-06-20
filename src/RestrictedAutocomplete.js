@@ -251,7 +251,7 @@ export class RestrictedAutocomplete {
 		    b.innerHTML += "<input type='hidden' value='" + item.place_id + "'>";
 
 		    b.addEventListener("click", (e) => {
-			    let placeId = this.dropDownPredictionList.getElementsByTagName("input")[1].value;
+			    let placeId = e.target.getElementsByTagName("input")[1].value;
 			    this.closeAllLists();
 			    this.addrSelected(placeId);
 		    });
@@ -355,6 +355,7 @@ export class RestrictedAutocomplete {
 			if (this.currentFocus > -1) {
 				/*and simulate a click on the "active" item:*/
 				if (x) x[this.currentFocus].click();
+				
 			}
 		} else if (e.keyCode == 9) {
 		    //tab
